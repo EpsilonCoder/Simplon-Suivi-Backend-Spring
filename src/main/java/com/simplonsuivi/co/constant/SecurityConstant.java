@@ -12,7 +12,7 @@ public class SecurityConstant {
     
     public static final String TOKEN_CANNOT_BE_VERIFIED="Votre jeton ne peut etre Vérifié";
     
-    public static final String GET_ARRAYS_ADMINISTRATION="User Management portal";
+    public static final String GET_ARRAYS_ADMINISTRATION="Simplon Sénégal portal";
     
     public static final String AUTHORITIES ="Authorities";
     
