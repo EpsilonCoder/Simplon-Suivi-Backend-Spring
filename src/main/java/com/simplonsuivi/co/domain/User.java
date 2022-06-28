@@ -28,6 +28,7 @@ public class User implements Serializable {
 	private String userId;
 	private String firstName;
 	private String lastName;
+	private String username;
 	private String password;
 	private String email;
 	private String profileImageUrl;
@@ -35,7 +36,7 @@ public class User implements Serializable {
 	private Date lastLoginDateDisplay;
 	private Date joinDate;
 	private String[] roles; //On a un tableau de role (ROLE_USER , ROLE_ADMIN)
-    private String authorities;
+    private String[] authorities;
     private boolean isActive;
     private boolean isNotlocked; 
 }
