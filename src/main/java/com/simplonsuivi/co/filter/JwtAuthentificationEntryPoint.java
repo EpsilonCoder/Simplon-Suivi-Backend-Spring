@@ -10,17 +10,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simplonsuivi.co.constant.SecurityConstant;
 import com.simplonsuivi.co.domain.HttpResponse;
 
+@Component
 public class JwtAuthentificationEntryPoint extends Http403ForbiddenEntryPoint {
 	
-	
+	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)throws IOException {
 		
-		HttpResponse httpResponse=new HttpResponse(HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN,
+		HttpResponse httpResponse=new HttpResponse(HttpStatus.FORBIDDEN.value(),null, HttpStatus.FORBIDDEN,
 				HttpStatus.FORBIDDEN.getReasonPhrase().toUpperCase(),
 				SecurityConstant.FORBIDDEN_MESSAGE);
 		
