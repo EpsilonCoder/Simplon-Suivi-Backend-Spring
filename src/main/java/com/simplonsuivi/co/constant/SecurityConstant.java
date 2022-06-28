@@ -22,6 +22,6 @@ public class SecurityConstant {
     
     public static final String OPTIONS_HTTP_METHOD="OPTIONS";
     
-    public static final String[] PUBLIC_URLS= {"user/login","user/register","user/resetpassword/**"};
+    public static final String[] PUBLIC_URLS= {"user/login","user/register","user/resetpassword/**","user/image/**"};
     
 }
