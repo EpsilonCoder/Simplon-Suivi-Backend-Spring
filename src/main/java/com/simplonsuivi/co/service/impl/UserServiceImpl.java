@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, UsernameExistException, EmailExistException  {
 		
-				ValidateNewUsernameAndEmail(StringUtils.EMPTY, username, email);
+				validateNewUsernameAndEmail(StringUtils.EMPTY, username, email);
 				User user = new User();
 				user.setUserId(generateUserId());
 				String password = generatePassword();
@@ -108,46 +108,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return RandomStringUtils.randomNumeric(12);
 	}
 
-	 @SuppressWarnings("unused")
-	private User ValidateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-			throws UserNotFoundException, UsernameExistException, EmailExistException {
-
-		// Alors nous commencons par verifier si le nom d'utilisateur et l'email
-		// n"existe pas deja
-
-		if (StringUtils.isNotBlank(currentUsername)) {
-			User currentUser = findUserByUsername(currentUsername);
-
-			if (currentUser == null) {
-				throw new UserNotFoundException("Pas d'utilisateur portant le nom" + currentUsername);
-			}
-
-			User userByUsername = findUserByUsername(newUsername);
-			if (userByUsername != null && currentUser.getId().equals(userByUsername.getId())) {
-				throw new UsernameExistException(EMAIL_ALREADY_EXISTS);
-			}
-
-			User userByEmail = findUserByEmail(newEmail);
-			if (userByUsername != null && currentUser.getId().equals(userByEmail.getId())) {
-				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-			}
-			return currentUser;
-
-		} else {
-			User userByUsername = findUserByUsername(newUsername);
-			if (userByUsername != null) {
-				throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-			}
-
-			User userByEmail = findUserByEmail(newEmail);
-			if (userByUsername != null) {
-				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-			}
-			return null;
-
-		}
-
-	}
+	 private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
+	        User userByNewUsername = findUserByUsername(newUsername);
+	        User userByNewEmail = findUserByEmail(newEmail);
+	        if(StringUtils.isNotBlank(currentUsername)) {
+	            User currentUser = findUserByUsername(currentUsername);
+	            if(currentUser == null) {
+	                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+	            }
+	            if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
+	                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+	            }
+	            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+	                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+	            }
+	            return currentUser;
+	        } else {
+	            if(userByNewUsername != null) {
+	                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+	            }
+	            if(userByNewEmail != null) {
+	                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+	            }
+	            return null;
+	        }
+	    }
 
 	@Override
 	public List<User> getUser() {
