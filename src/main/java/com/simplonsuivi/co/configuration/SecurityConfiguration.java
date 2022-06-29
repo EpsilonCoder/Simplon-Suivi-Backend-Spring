@@ -20,54 +20,52 @@ import com.simplonsuivi.co.filter.JwtAccessDeniedHandler;
 import com.simplonsuivi.co.filter.JwtAuthentificationEntryPoint;
 import com.simplonsuivi.co.filter.JwtAuthorisationFilter;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration  extends WebSecurityConfigurerAdapter{
+
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private JwtAuthorisationFilter jwtAuthorizationFilter;
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private JwtAuthentificationEntryPoint jwtAuthenticationEntryPoint;
+    private UserDetailsService userDetailsService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    private JwtAuthentificationEntryPoint jwtAuthentificationEntryPoint;
-	@Autowired
-	private JwtAuthorisationFilter jwtAuthorisationFilter;
-	@Autowired
-	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	@Autowired
-	private JwtAuthorisationFilter jwtAuthorisationFilter2;
-	@Qualifier("userDetailsService")
-	private UserDetailsService userDetailsService;
-	
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-	}
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().cors().and()
-		    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		    .and().authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
-		    .anyRequest().authenticated()
-		    .and()
-		    .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
-		    .authenticationEntryPoint(jwtAuthentificationEntryPoint)
-		    .and()
-		    .addFilterBefore(jwtAuthorisationFilter, UsernamePasswordAuthenticationFilter.class);	
-		
-	}
-	
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManager() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    public SecurityConfiguration(JwtAuthorisationFilter jwtAuthorizationFilter,
+                                 JwtAccessDeniedHandler jwtAccessDeniedHandler,
+                                 JwtAuthentificationEntryPoint jwtAuthenticationEntryPoint,
+                                 UserDetailsService userDetailsService,
+                                 BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.userDetailsService = userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().cors().and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }
- 
