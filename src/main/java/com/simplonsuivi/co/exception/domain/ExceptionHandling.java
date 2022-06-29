@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,13 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.simplonsuivi.co.domain.HttpResponse;
 
 @RestControllerAdvice
-public class ExceptionHandling {
+public class ExceptionHandling implements ErrorController{
 
 	
 	private final Logger LOGGER=LoggerFactory.getLogger(getClass());
@@ -32,6 +35,8 @@ public class ExceptionHandling {
 	private static final String ACCOUNT_DISABLED="Votre compte a été désactivé.Merci de contacter l'administrateur";
 	private static final String ERROR_PROCESSIND_FILE="Une erreur s'est produit lors du chargement de votre fichier";
 	private static final String NOT_ENOUGH_PERMISSION="Vous n'avez pas la permission d'efectuer cette tache";
+	private static final String ERROR_PATH="/error";
+	
 	
 	@ExceptionHandler(DisabledException.class)
 	private ResponseEntity<HttpResponse> accountDisabledException(){
@@ -55,6 +60,8 @@ public class ExceptionHandling {
 	    public ResponseEntity<HttpResponse> accessDeniedException() {
 	        return this.createHttpResponse(HttpStatus.FORBIDDEN, NOT_ENOUGH_PERMISSION);
 	    }
+	    
+	    
 
 	    @ExceptionHandler(LockedException.class)
 	    public ResponseEntity<HttpResponse> lockedException() {
@@ -91,6 +98,14 @@ public class ExceptionHandling {
 	        HttpMethod supportedMethod = Objects.requireNonNull(e.getSupportedHttpMethods()).iterator().next();
 	        return this.createHttpResponse(HttpStatus.METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
 	    }
+	    
+	    @ExceptionHandler(NoHandlerFoundException.class)
+	    public ResponseEntity<HttpResponse> methodNotSupportedException(NoHandlerFoundException e) {
+	        return this.createHttpResponse(HttpStatus.BAD_REQUEST, "Cette page n'a pas été trouvé !!!");
+	    }
+	    
+	    
+	    
 
 	    @ExceptionHandler(NoResultException.class)
 	    public ResponseEntity<HttpResponse> noResultException(NoResultException e) {
@@ -104,6 +119,8 @@ public class ExceptionHandling {
 	        return this.createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR,ERROR_PROCESSIND_FILE);
 	    }
 
+	    
+	   
 	   
 
 }

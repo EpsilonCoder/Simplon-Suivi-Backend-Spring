@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.simplonsuivi.co.enumeration.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +37,7 @@ public class User implements Serializable {
 	private Date lastLoginDate;
 	private Date lastLoginDateDisplay;
 	private Date joinDate;
-	private String[] roles; //On a un tableau de role (ROLE_USER , ROLE_ADMIN)
+	private String role;
     private String[] authorities;
     private boolean isActive;
     private boolean isNotlocked; 
