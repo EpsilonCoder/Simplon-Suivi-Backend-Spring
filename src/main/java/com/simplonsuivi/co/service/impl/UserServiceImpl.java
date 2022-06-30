@@ -2,6 +2,7 @@ package com.simplonsuivi.co.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.transaction.Transactional;
 
@@ -26,6 +27,7 @@ import com.simplonsuivi.co.exception.domain.EmailExistException;
 import com.simplonsuivi.co.exception.domain.UserNotFoundException;
 import com.simplonsuivi.co.exception.domain.UsernameExistException;
 import com.simplonsuivi.co.repository.UserRepository;
+import com.simplonsuivi.co.service.LoginAttemptService;
 import com.simplonsuivi.co.service.UserService;
 
 @Service
@@ -40,8 +42,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	public UserServiceImpl(UserRepository userRepository) {
+
+	private LoginAttemptService loginAttemptService;
+	
+	public UserServiceImpl(UserRepository userRepository,LoginAttemptService loginAttemptService) {
 		this.userRepository = userRepository;
+		this.loginAttemptService=loginAttemptService;
 	}
 
 	@Override
@@ -53,6 +59,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			LOGGER.error(NO_USER_FOUND_BY_USERNAME + username);
 			throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
 		} else {
+			try {
+				validateLoginAttempt(user);
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			user.setLastLoginDateDisplay(user.getLastLoginDate());
 			user.setLastLoginDate(new Date());
 			userRepository.save(user);
@@ -62,6 +74,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return userPrincipal;
 		}
 
+	}
+
+	private void validateLoginAttempt(User user) throws ExecutionException  {
+		if(user.isNotlocked()) {
+			if(loginAttemptService.hasExceededMaxAttemps(user.getUsername())) {
+				user.setNotlocked(false);
+			}else {
+				user.setNotlocked(true);
+			}
+			
+		}
+		
 	}
 
 	@Override
