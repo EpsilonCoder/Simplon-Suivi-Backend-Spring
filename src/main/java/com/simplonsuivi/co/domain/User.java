@@ -1,6 +1,7 @@
 package com.simplonsuivi.co.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,9 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import com.simplonsuivi.co.enumeration.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,5 +38,5 @@ public class User implements Serializable {
 	private String role;
     private String[] authorities;
     private boolean isActive;
-    private boolean isNotlocked; 
+    private boolean isNotlocked;
 }

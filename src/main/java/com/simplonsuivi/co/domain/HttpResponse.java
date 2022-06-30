@@ -15,6 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HttpResponse {
 	
+
+	public HttpResponse(int value, HttpStatus forbidden, String upperCase, String forbiddenMessage) {
+		
+	}
+	
 	private int httpStatusCode;
 	@JsonFormat(shape =JsonFormat.Shape.STRING,pattern = "MM-dd-yyyy hh:mm:ss")
 	private Date timeStamp;
@@ -22,15 +27,7 @@ public class HttpResponse {
 	private String reason;
 	private String message;
 	
-	
-	public HttpResponse(int httpStatusCode, Date timeStamp, HttpStatus httpStatus, String reason, String message) {
-		super();
-		this.httpStatusCode = httpStatusCode;
-		this.timeStamp = new Date();
-		this.httpStatus = httpStatus;
-		this.reason = reason;
-		this.message = message;
-	}
+
 
 
 }

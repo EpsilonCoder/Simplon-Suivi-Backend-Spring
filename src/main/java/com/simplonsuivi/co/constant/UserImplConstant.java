@@ -6,5 +6,6 @@ public class UserImplConstant {
 	public static final String EMAIL_ALREADY_EXISTS="Email existe deja";
 	public static final String NO_USER_FOUND_BY_USERNAME="Pas d'utilisateur trouvé";
 	public static final String FOUND_USER_BY_USERNAME="Utilisateur";
-	public static final String DEFAULT_USER_IMAGE_PATH="/user/image/profile/temp";
+	public static final String NO_FOUND_USER_BY_EMAIL="Pas d'utilisateur trouvé pour cette addresse ";
+	public static final String DEFAULT_USER_IMAGE_PATH="/user/image/profile/";
 }
