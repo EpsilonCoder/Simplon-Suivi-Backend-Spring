@@ -30,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import static com.simplonsuivi.co.constant.UserImplConstant.*;
 
 import static com.simplonsuivi.co.constant.FileConstant.*;
+
 import com.simplonsuivi.co.domain.User;
 import com.simplonsuivi.co.domain.UserPrincipal;
 import com.simplonsuivi.co.enumeration.Role;
@@ -124,18 +125,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setNotlocked(true);
 		user.setRole(ROLE_USER.name());
 		user.setAuthorities(ROLE_USER.getAuthorities());
-		user.setProfileImageUrl(getTemporaryProfileImageUrl());
+		user.setProfileImageUrl(getTemporaryProfileImageUrl1(username));
 		userRepository.save(user);
 		emailSercice.sendNewPasswordEmail(firstName, password, email);
-		// LOGGER.info("Nouveau mot de passe" + password);
+		LOGGER.info("Nouveau mot de passe" + password);
 		return user;
 
 	}
 
-	private String getTemporaryProfileImageUrl() {
+	 private String getTemporaryProfileImageUrl1(String username) {
+	        return ServletUriComponentsBuilder.fromCurrentContextPath().path(com.simplonsuivi.co.constant.FileConstant.DEFAULT_USER_IMAGE_PATH.concat(username)).toUriString();
+	    }
 
-		return ServletUriComponentsBuilder.fromCurrentContextPath().path(USER_IMAGE_PATH).toUriString();
-	}
 
 	private String encodePassword(String password) {
 
@@ -212,7 +213,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setNotlocked(isNonLocked);
 		user.setRole(getRoleEnumName(role).name());
 		user.setAuthorities(this.getRoleEnumName(role).getAuthorities());
-		user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+		user.setProfileImageUrl(getTemporaryProfileImageUrl1(username));
 		userRepository.save(user);
 		saveProfileImage(user, profileImage);
 		return user;

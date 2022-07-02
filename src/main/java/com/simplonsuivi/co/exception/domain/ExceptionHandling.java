@@ -109,7 +109,7 @@ public class ExceptionHandling implements ErrorController{
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
-        HttpResponse httpResponse = new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message);
+        HttpResponse httpResponse = new HttpResponse(httpStatus.value(), null, httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message);
         return new ResponseEntity<>(httpResponse, httpStatus);
     }
 

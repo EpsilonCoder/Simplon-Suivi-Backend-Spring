@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +63,7 @@ public class UserResource extends ExceptionHandling {
 	}
 
 	@PostMapping("/login")
+	@CrossOrigin("http://localhost:4200")
     public ResponseEntity<User> login(@RequestBody User user) {
         authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findUserByUsername(user.getUsername());
@@ -71,16 +74,16 @@ public class UserResource extends ExceptionHandling {
 	
 	
 	@PostMapping("add")
-	public ResponseEntity<User> addNewEntity(@RequestParam("firtsName") String firstName,
+	public ResponseEntity<User> addNewEntity(@RequestParam("firstName") String firstName,
 			                                 @RequestParam("lastName") String lastName,
 			                                 @RequestParam("username") String username,
 			                                 @RequestParam("email") String email,
 			                                 @RequestParam("role") String role,
 			                                 @RequestParam("isActive") String isActive,
-			                                 @RequestParam("isNonLocked") String isNonLocked,
+			                                 @RequestParam("isNotLocked") String isNotLocked,
 			                                 @RequestParam(value = "profileImage",required = false) MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
 		
-		User newUser=userService.addNewUser(firstName, lastName, username, email, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+		User newUser=userService.addNewUser(firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
 												return new ResponseEntity<> (newUser,OK);
 		
 	}
@@ -88,16 +91,16 @@ public class UserResource extends ExceptionHandling {
 	
 	@PostMapping("update")
 	public ResponseEntity<User> update(@RequestParam("currentUserName") String currentUserName,
-			                                @RequestParam("firtsName") String firstName,
+			                                @RequestParam("firstName") String firstName,
 			                                 @RequestParam("lastName") String lastName,
 			                                 @RequestParam("username") String username,
 			                                 @RequestParam("email") String email,
 			                                 @RequestParam("role") String role,
 			                                 @RequestParam("isActive") String isActive,
-			                                 @RequestParam("isNonLocked") String isNonLocked,
+			                                 @RequestParam("isNotLocked") String isNotLocked,
 			                                 @RequestParam(value = "profileImage",required = false) MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
 		
-		User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+		User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
 												return new ResponseEntity<> (updatedUser,OK);
 		
 	}
@@ -114,14 +117,15 @@ public class UserResource extends ExceptionHandling {
 		List<User> users=userService.getUser();
 		return new ResponseEntity<> (users,OK);
 	}
+		
 	
-
-	@GetMapping("/resetPassword/{email}")
-	public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException{
-		userService.resetPassword(email);
-		return response(OK,"Un email de reinitialisation du mot de passe Simplon-Suivi a bien été envoyé:"+email);
-	}
-	
+	 @GetMapping("/reset-password/{email}")
+	    public ResponseEntity<HttpResponse> resetPassword(@PathVariable String email)
+	            throws EmailNotFoundException, MessagingException {
+	        this.userService.resetPassword(email);
+	        return this.response(HttpStatus.OK,SecurityConstant.EMAIL_SENT.concat(email));
+	    }
+	 
 	private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(), httpStatus);
     }
@@ -134,7 +138,7 @@ public class UserResource extends ExceptionHandling {
 	}
 	
 	
-	@PostMapping("updateProfilImage")
+	@PostMapping("updateProfileImage")
 	public ResponseEntity<User> updateProfilImage(
 			                                 @RequestParam("username") String username,
 			                                 @RequestParam(value = "profileImage") MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
@@ -179,7 +183,8 @@ public class UserResource extends ExceptionHandling {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, MessagingException{		
+	@CrossOrigin("http://localhost:4200")
+	 public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, EmailExistException, MessagingException, com.simplonsuivi.co.exception.domain.UsernameExistException{		
 	 User newUser=	userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
 	 return new ResponseEntity<>(newUser,OK);
 	}
