@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.simplonsuivi.co.constant.FileConstant;
 import com.simplonsuivi.co.constant.SecurityConstant;
 import com.simplonsuivi.co.domain.HttpResponse;
@@ -45,6 +43,7 @@ import com.simplonsuivi.co.utility.JWTTokenProvider;
 
 @RestController
 @RequestMapping(value = "/user")
+@CrossOrigin("http://localhost:4200")
 public class UserResource extends ExceptionHandling {
 	
 	private UserService userService;
@@ -63,7 +62,7 @@ public class UserResource extends ExceptionHandling {
 	}
 
 	@PostMapping("/login")
-	@CrossOrigin("http://localhost:4200")
+
     public ResponseEntity<User> login(@RequestBody User user) {
         authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findUserByUsername(user.getUsername());
@@ -73,25 +72,26 @@ public class UserResource extends ExceptionHandling {
     }
 	
 	
-	@PostMapping("add")
-	public ResponseEntity<User> addNewEntity(@RequestParam("firstName") String firstName,
-			                                 @RequestParam("lastName") String lastName,
-			                                 @RequestParam("username") String username,
-			                                 @RequestParam("email") String email,
-			                                 @RequestParam("role") String role,
-			                                 @RequestParam("isActive") String isActive,
-			                                 @RequestParam("isNotLocked") String isNotLocked,
-			                                 @RequestParam(value = "profileImage",required = false) MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
-		
-		User newUser=userService.addNewUser(firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
-												return new ResponseEntity<> (newUser,OK);
-		
-	}
+	 @PostMapping("/add")
+	    public ResponseEntity<User> addNewUser(@RequestParam String firstName,
+	                                           @RequestParam String lastName,
+	                                           @RequestParam String username,
+	                                           @RequestParam String email,
+	                                           @RequestParam String role,
+	                                           @RequestParam String isActive,
+	                                           @RequestParam String isNotLocked,
+	                                           @RequestParam(required = false) MultipartFile profileImage)
+	            throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception {
+
+	        User newUser = this.userService.addNewUser(firstName, lastName, username, email, role,
+	                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
+	        return new ResponseEntity<>(newUser, HttpStatus.OK);
+	    }
 	
 	
 	@PostMapping("update")
 	public ResponseEntity<User> update(@RequestParam("currentUserName") String currentUserName,
-			                                @RequestParam("firstName") String firstName,
+			                                 @RequestParam("firstName") String firstName,
 			                                 @RequestParam("lastName") String lastName,
 			                                 @RequestParam("username") String username,
 			                                 @RequestParam("email") String email,
@@ -130,14 +130,15 @@ public class UserResource extends ExceptionHandling {
         return new ResponseEntity<>(new HttpResponse(), httpStatus);
     }
 
-	@DeleteMapping("/delete/{id}")
-	@PreAuthorize("hasAnyAuthority('user:delete')")
-	public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") long id){
-		userService.deleteUser(id);
-		return response(NO_CONTENT,"Ce compte a été supprimé avec Success");
-	}
-	
-	
+	//@PreAuthorize, cette annotation est possible car nous avons configuré @EnableGlobalMethodSecurity(prePostEnabled = true)
+    @DeleteMapping("/delete/{username}")
+    // @PreAuthorize("hasAnyAuthority('user:delete')")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable String username)
+            throws UserNotFoundException, IOException {
+        this.userService.deleteUser(username);
+        return this.response(HttpStatus.OK, "L'utilisateur a bien ete supprimé");
+    }
+
 	@PostMapping("updateProfileImage")
 	public ResponseEntity<User> updateProfilImage(
 			                                 @RequestParam("username") String username,
@@ -183,7 +184,6 @@ public class UserResource extends ExceptionHandling {
 	}
 
 	@PostMapping("/register")
-	@CrossOrigin("http://localhost:4200")
 	 public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, EmailExistException, MessagingException, com.simplonsuivi.co.exception.domain.UsernameExistException{		
 	 User newUser=	userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
 	 return new ResponseEntity<>(newUser,OK);

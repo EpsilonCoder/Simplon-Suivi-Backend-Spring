@@ -1,5 +1,6 @@
 package com.simplonsuivi.co.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +28,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import static com.simplonsuivi.co.constant.UserImplConstant.*;
-
 import static com.simplonsuivi.co.constant.FileConstant.*;
 
+import com.simplonsuivi.co.constant.FileConstant;
 import com.simplonsuivi.co.domain.User;
 import com.simplonsuivi.co.domain.UserPrincipal;
 import com.simplonsuivi.co.enumeration.Role;
@@ -250,11 +251,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	}
 
-	@Override
-	public void deleteUser(long id) {
-		userRepository.deleteById(id);
-
-	}
 
 	@Override
 	public void resetPassword(String email) throws EmailNotFoundException, MessagingException {
@@ -288,17 +284,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				LOGGER.info(DIRECTORY_CREATED +userFolder);
 			}
 			Files.deleteIfExists(Paths.get(userFolder+user.getUsername()+DOT+JPG_EXTENSION));
-			Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUsername()+DOT+JPG_EXTENSION),StandardCopyOption.REPLACE_EXISTING);
-			
+			Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUsername()+DOT+JPG_EXTENSION),StandardCopyOption.REPLACE_EXISTING);	
 			user.setProfileImageUrl(setProfileImageUrl(user.getUsername()));
 			userRepository.save(user);
 			LOGGER.info(FILE_SAVED_IN_FILE_SYSTEM+profileImage.getOriginalFilename());
 		}
-
 	}
 
 	private String setProfileImageUrl(String username) {
 		return ServletUriComponentsBuilder.fromCurrentContextPath().path(USER_IMAGE_PATH+username+FORWARD_SLASH+username+DOT+JPG_EXTENSION).toUriString();
 	}
+
+	
+	   @Override
+	    public void deleteUser(String username) throws UserNotFoundException, IOException {
+	        User user = this.userRepository.findUserByUsername(username);
+	        if (user == null) {
+	            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME.concat(username));
+	        }
+	        Path userFolder = Paths.get(FileConstant.USER_FOLDER.concat(user.getUsername())).toAbsolutePath().normalize();
+	        FileUtils.deleteDirectory(new File(userFolder.toString()));
+	        this.userRepository.deleteById(user.getId());
+	    }
+
+	
 
 }
