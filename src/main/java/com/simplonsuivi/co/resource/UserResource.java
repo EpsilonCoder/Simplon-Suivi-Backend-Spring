@@ -90,7 +90,7 @@ public class UserResource extends ExceptionHandling {
 	
 	
 	@PostMapping("update")
-	public ResponseEntity<User> update(@RequestParam("currentUserName") String currentUserName,
+	public ResponseEntity<User> update(@RequestParam("currentUsername") String currentUserName,
 			                                 @RequestParam("firstName") String firstName,
 			                                 @RequestParam("lastName") String lastName,
 			                                 @RequestParam("username") String username,
@@ -100,7 +100,7 @@ public class UserResource extends ExceptionHandling {
 			                                 @RequestParam("isNotLocked") String isNotLocked,
 			                                 @RequestParam(value = "profileImage",required = false) MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
 		
-		User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
+	 User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
 												return new ResponseEntity<> (updatedUser,OK);
 		
 	}
@@ -132,7 +132,7 @@ public class UserResource extends ExceptionHandling {
 
 	//@PreAuthorize, cette annotation est possible car nous avons configuré @EnableGlobalMethodSecurity(prePostEnabled = true)
     @DeleteMapping("/delete/{username}")
-    // @PreAuthorize("hasAnyAuthority('user:delete')")
+    //@PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable String username)
             throws UserNotFoundException, IOException {
         this.userService.deleteUser(username);
