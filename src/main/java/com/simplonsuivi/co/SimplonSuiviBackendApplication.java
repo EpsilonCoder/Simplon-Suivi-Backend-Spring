@@ -53,7 +53,6 @@ public class SimplonSuiviBackendApplication  {
 		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
 		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration); 
-
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
 	
