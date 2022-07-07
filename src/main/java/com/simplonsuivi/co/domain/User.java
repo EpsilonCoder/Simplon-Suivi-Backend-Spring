@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -44,4 +47,12 @@ public class User implements Serializable {
     private String[] authorities;
     private boolean isActive;
     private boolean isNotlocked;
+    @ManyToOne
+    private Promo promo;
+    @ManyToOne
+    private Annonce annonce;
+    @ManyToOne
+    private NiveauEtude niveauEtude;
+    @ManyToMany(mappedBy = "users")
+    private  Collection<EntrepriseAcceuil> entrepriseAcceuils;
 }
