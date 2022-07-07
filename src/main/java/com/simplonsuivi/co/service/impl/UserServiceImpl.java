@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -278,6 +280,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private void saveProfileImage(User user, MultipartFile profileImage) throws IOException {
 		
 		if(profileImage !=null) {
+			
+			if (!Arrays.asList(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
+               profileImage.getOriginalFilename().concat("Attention le fichier n est pas une image");
+            }
 			Path userFolder=Paths.get(USER_FOLDER+user.getUsername()).toAbsolutePath().normalize();
 			if(profileImage!=null) {
 				Files.createDirectories(userFolder);
