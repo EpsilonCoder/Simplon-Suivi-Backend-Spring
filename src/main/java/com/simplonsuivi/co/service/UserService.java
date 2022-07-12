@@ -14,7 +14,7 @@ import com.simplonsuivi.co.exception.domain.UsernameExistException;
 public interface UserService {
 
 	
-	User register(String firstName,String lastName,String username,String email)throws UserNotFoundException, UsernameExistException, EmailExistException, MessagingException;
+	User register(String firstName,String lastName,String username,String email,String telepone)throws UserNotFoundException, UsernameExistException, EmailExistException, MessagingException;
 	
 	List<User> getUser();
 	
@@ -22,9 +22,11 @@ public interface UserService {
 	
 	User findUserByEmail(String Email);
 	
-	User addNewUser(String firstName,String lastName,String username,String email,String role,boolean isNonLocked,boolean isActive , MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, Exception;
+	User findUserByTelephone(String Telephone);
 	
-	User updateUser(String currentUsername,String newFirstName,String newLastName,String newUsername,String newEmail,String role,boolean isNonLocked,boolean isActive , MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException,  Exception;
+	User addNewUser(String firstName,String lastName,String username,String email,String telephone,String role,boolean isNonLocked,boolean isActive ,boolean situations ,boolean entretien, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, Exception;
+	
+	User updateUser(String currentUsername,String newFirstName,String newLastName,String newUsername,String newEmail,String newTelephone,String role,boolean isNonLocked,boolean isActive , boolean situations ,  boolean entretien ,MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException,  Exception;
 	
 	void deleteUser(String username) throws IOException, UserNotFoundException;
 	

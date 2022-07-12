@@ -2,7 +2,6 @@ package com.simplonsuivi.co.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,10 +109,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public User register(String firstName, String lastName, String username, String email)
+	public User register(String firstName, String lastName, String username, String email,String telephone)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, MessagingException {
 
-		validateNewUsernameAndEmail(StringUtils.EMPTY, username, email);
+		validateNewUsernameAndEmail(StringUtils.EMPTY, username, email,telephone);
 		User user = new User();
 		user.setUserId(generateUserId());
 		String password = generatePassword();
@@ -121,6 +120,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 		user.setEmail(email);
+		user.setTelephone(telephone);
 		user.setUsername(username);
 		user.setJoinDate(new Date());
 		user.setPassword(encodedPassword);
@@ -154,10 +154,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return RandomStringUtils.randomNumeric(12);
 	}
 
-	private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
+	private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail,String newTelephone)
 			throws UserNotFoundException, UsernameExistException, EmailExistException {
 		User userByNewUsername = findUserByUsername(newUsername);
 		User userByNewEmail = findUserByEmail(newEmail);
+		User userByNewTelephone=findUserByTelephone(newTelephone);
 		if (StringUtils.isNotBlank(currentUsername)) {
 			User currentUser = findUserByUsername(currentUsername);
 			if (currentUser == null) {
@@ -169,6 +170,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
 				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
 			}
+			if (userByNewTelephone != null && !currentUser.getId().equals(userByNewTelephone.getId())) {
+				throw new EmailExistException(Telephone_ALREADY_EXISTS);
+			}
 			return currentUser;
 		} else {
 			if (userByNewUsername != null) {
@@ -176,6 +180,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			}
 			if (userByNewEmail != null) {
 				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+			}
+			if (userByNewTelephone != null) {
+				throw new EmailExistException(Telephone_ALREADY_EXISTS);
 			}
 			return null;
 		}
@@ -196,13 +203,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		return userRepository.findUserByEmail(Email);
 	}
+	
+	@Override
+	public User findUserByTelephone(String Telephone) {
+
+		return userRepository.findUserByEmail(Telephone);
+	}
 
 	@Override
-	public User addNewUser(String firstName, String lastName, String username, String email, String role,
-			boolean isNonLocked, boolean isActive, MultipartFile profileImage)
+	public User addNewUser(String firstName, String lastName, String username, String email,String telephone, String role,
+			boolean isNonLocked, boolean isActive,boolean situations,boolean entretien, MultipartFile profileImage)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, Exception {
 
-		validateNewUsernameAndEmail(StringUtils.EMPTY, username, email);
+		validateNewUsernameAndEmail(StringUtils.EMPTY, username, email,telephone);
 		User user = new User();
 		String password = generatePassword();
 		String encodedPassword = encodePassword(password);
@@ -211,9 +224,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setJoinDate(new Date());
 		user.setUsername(username);
 		user.setEmail(email);
+		user.setTelephone(telephone);
 		user.setPassword(encodedPassword);
 		user.setActive(isActive);
 		user.setNotlocked(isNonLocked);
+		user.setSituations(false);
+		user.setEntretien(false);
 		user.setRole(getRoleEnumName(role).name());
 		user.setAuthorities(this.getRoleEnumName(role).getAuthorities());
 		user.setProfileImageUrl(getTemporaryProfileImageUrl1(username));
@@ -234,17 +250,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername,
-			String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage)
+			String newEmail,String newTelephone, String role, boolean isNonLocked, boolean isActive,boolean situations,boolean entretien, MultipartFile profileImage)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, Exception {
 
-		User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
+		User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail,newTelephone);
 
 		currentUser.setFirstName(newFirstName);
 		currentUser.setLastName(newLastName);
 		currentUser.setUsername(newUsername);
 		currentUser.setEmail(newEmail);
+		currentUser.setTelephone(newTelephone);
 		currentUser.setActive(isActive);
 		currentUser.setNotlocked(isNonLocked);
+		currentUser.setSituations(situations);
+		currentUser.setEntretien(entretien);
 		currentUser.setRole(getRoleEnumName(role).name());
 		currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
 		userRepository.save(currentUser);
@@ -272,7 +291,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public User updateProfileImage(String username, MultipartFile profileImage)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, IOException {
-		User user = validateNewUsernameAndEmail(username, null, null);
+		User user = validateNewUsernameAndEmail(username, null, null,null);
 		saveProfileImage(user, profileImage);
 		return user;
 	}
@@ -312,6 +331,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	        FileUtils.deleteDirectory(new File(userFolder.toString()));
 	        this.userRepository.deleteById(user.getId());
 	    }
+
+	
 
 	
 

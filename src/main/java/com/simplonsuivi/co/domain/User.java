@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
@@ -27,18 +26,24 @@ import lombok.NoArgsConstructor;
 
 public class User implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false, updatable = false)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Long id;
 	private String userId;
+	@Column(nullable = false)
 	private String firstName;
 	private String lastName;
 	private String username;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 	private String email;
+	private String telephone;
 	private String profileImageUrl;
 	private Date lastLoginDate;
 	private Date lastLoginDateDisplay;
@@ -47,6 +52,8 @@ public class User implements Serializable {
     private String[] authorities;
     private boolean isActive;
     private boolean isNotlocked;
+    private boolean situations;
+    private boolean entretien;
     @ManyToOne
     private Promo promo;
     @ManyToOne
@@ -55,4 +62,5 @@ public class User implements Serializable {
     private NiveauEtude niveauEtude;
     @ManyToMany(mappedBy = "users")
     private  Collection<EntrepriseAcceuil> entrepriseAcceuils;
+	
 }

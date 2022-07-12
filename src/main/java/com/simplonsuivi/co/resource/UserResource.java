@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 
 import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -77,14 +76,16 @@ public class UserResource extends ExceptionHandling {
 	                                           @RequestParam String lastName,
 	                                           @RequestParam String username,
 	                                           @RequestParam String email,
+	                                           @RequestParam String telephone,
 	                                           @RequestParam String role,
 	                                           @RequestParam String isActive,
 	                                           @RequestParam String isNotLocked,
+	                                           @RequestParam String situations,
+	                                           @RequestParam String entretien,
 	                                           @RequestParam(required = false) MultipartFile profileImage)
-	            throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception {
-
-	        User newUser = this.userService.addNewUser(firstName, lastName, username, email, role,
-	                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
+	        throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception {
+	        User newUser = this.userService.addNewUser(firstName, lastName, username, email,telephone, role,
+	                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive),Boolean.parseBoolean(situations),Boolean.parseBoolean(entretien), profileImage);
 	        return new ResponseEntity<>(newUser, HttpStatus.OK);
 	    }
 	
@@ -95,12 +96,15 @@ public class UserResource extends ExceptionHandling {
 			                                 @RequestParam("lastName") String lastName,
 			                                 @RequestParam("username") String username,
 			                                 @RequestParam("email") String email,
+			                                 @RequestParam("telephone") String telephone,
 			                                 @RequestParam("role") String role,
 			                                 @RequestParam("isActive") String isActive,
 			                                 @RequestParam("isNotLocked") String isNotLocked,
+			                                 @RequestParam("situations") String situations,
+			                                 @RequestParam("situations") String entretien,
 			                                 @RequestParam(value = "profileImage",required = false) MultipartFile profileImage) throws UserNotFoundException,com.simplonsuivi.co.exception.domain.UsernameExistException, EmailExistException, Exception{
 		
-	 User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive), profileImage);
+	 User updatedUser=userService.updateUser(currentUserName,firstName, lastName, username, email,telephone, role, Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive),Boolean.parseBoolean(situations),Boolean.parseBoolean(entretien), profileImage);
 												return new ResponseEntity<> (updatedUser,OK);
 		
 	}
@@ -132,7 +136,7 @@ public class UserResource extends ExceptionHandling {
 
 	//@PreAuthorize, cette annotation est possible car nous avons configuré @EnableGlobalMethodSecurity(prePostEnabled = true)
     @DeleteMapping("/delete/{username}")
-    @PreAuthorize("hasAnyAuthority('Super Admin:delete')")
+   // @PreAuthorize("hasAnyAuthority('Super Admin:Suppression')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable String username)
             throws UserNotFoundException, IOException {
         this.userService.deleteUser(username);
@@ -185,7 +189,7 @@ public class UserResource extends ExceptionHandling {
 
 	@PostMapping("/register")
 	 public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, EmailExistException, MessagingException, com.simplonsuivi.co.exception.domain.UsernameExistException{		
-	 User newUser=	userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
+	 User newUser=	userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(),user.getTelephone());
 	 return new ResponseEntity<>(newUser,OK);
 	}
 
