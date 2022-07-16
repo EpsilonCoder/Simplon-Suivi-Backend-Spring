@@ -18,6 +18,10 @@ public interface UserService {
 	
 	List<User> getUser();
 	
+	List<User> getUserAlafabrique();
+	
+	List<User> getUserEnEntreprise();
+	
 	User findUserByUsername(String username);
 	
 	User findUserByEmail(String Email);

@@ -18,6 +18,7 @@ import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -121,6 +122,18 @@ public class UserResource extends ExceptionHandling {
 		List<User> users=userService.getUser();
 		return new ResponseEntity<> (users,OK);
 	}
+	
+	@GetMapping("/Alafabrique")
+	public ResponseEntity<List<User>> getUserAlafabrique(){
+		List<User> users=userService.getUserAlafabrique();
+		return new ResponseEntity<> (users,OK);
+	}
+	
+	@GetMapping("/EnEntreprise")
+	public ResponseEntity<List<User>> getUserEnEntreprise(){
+		List<User> users=userService.getUserEnEntreprise();
+		return new ResponseEntity<> (users,OK);
+	}
 		
 	
 	 @GetMapping("/reset-password/{email}")
@@ -187,10 +200,12 @@ public class UserResource extends ExceptionHandling {
 		
 	}
 
-	@PostMapping("/register")
-	 public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, EmailExistException, MessagingException, com.simplonsuivi.co.exception.domain.UsernameExistException{		
-	 User newUser=	userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(),user.getTelephone());
-	 return new ResponseEntity<>(newUser,OK);
-	}
+	
+	 @PostMapping("/register")
+	    public ResponseEntity<User> register(@RequestBody User user)
+	            throws UserNotFoundException, EmailExistException, UsernameNotFoundException, MessagingException, com.simplonsuivi.co.exception.domain.UsernameExistException {
+	        User newUser = this.userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getTelephone());
+	        return new ResponseEntity<>(newUser, HttpStatus.OK);
+	    }
 
 }

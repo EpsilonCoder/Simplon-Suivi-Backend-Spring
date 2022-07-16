@@ -192,6 +192,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public List<User> getUser() {
 		return userRepository.findAll();
 	}
+	
+	@Override
+	public List<User> getUserAlafabrique() {
+		return userRepository.findBySituationsIsFalse();
+	}
+	
+	@Override
+	public List<User> getUserEnEntreprise() {
+		return userRepository.findBySituationsIsTrue();
+	}
 
 	@Override
 	public User findUserByUsername(String username) {

@@ -3,10 +3,16 @@ package com.simplonsuivi.co;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.hateoas.config.HypermediaMappingInformation;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -14,6 +20,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.simplonsuivi.co.constant.FileConstant;
+import com.simplonsuivi.co.domain.Promo;
+import com.simplonsuivi.co.repository.PromoRespository;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -22,13 +30,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableWebMvc
 @EnableSwagger2
-public class SimplonSuiviBackendApplication  {
+public class SimplonSuiviBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SimplonSuiviBackendApplication.class, args);
 		
 		new File(FileConstant.USER_FOLDER).mkdirs();
 	}
+	
+	@Autowired
+	private RepositoryRestConfiguration repositoryRestConfiguration;
 	
 	/**
 	* 
@@ -60,4 +71,13 @@ public class SimplonSuiviBackendApplication  {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	@Bean
+	CommandLineRunner start(PromoRespository promoRespository) {
+		return args->{
+			repositoryRestConfiguration.exposeIdsFor(Promo.class);
+		};
+	}
+	
+
 }

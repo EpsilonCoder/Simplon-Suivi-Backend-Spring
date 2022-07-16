@@ -1,6 +1,7 @@
 package com.simplonsuivi.co.exception.domain;
 
 import java.io.IOException;
+
 import java.util.Objects;
 
 import javax.persistence.NoResultException;
@@ -9,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpMethod;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -23,7 +27,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.simplonsuivi.co.domain.HttpResponse;
 
 @RestControllerAdvice
-public class ExceptionHandling implements ErrorController{
+public abstract class ExceptionHandling implements ErrorController {
 
 	
 	private final Logger LOGGER=LoggerFactory.getLogger(getClass());
@@ -113,6 +117,6 @@ public class ExceptionHandling implements ErrorController{
         return new ResponseEntity<>(httpResponse, httpStatus);
     }
 
-	   
+	
 
 }
