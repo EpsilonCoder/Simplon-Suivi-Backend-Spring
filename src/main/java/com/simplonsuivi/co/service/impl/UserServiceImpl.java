@@ -194,13 +194,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 	
 	@Override
-	public List<User> getUserAlafabrique() {
-		return userRepository.findBySituationsIsFalse();
+	public long getUserAlafabrique() {
+		return userRepository.countBySituationsIsFalse();
 	}
 	
 	@Override
-	public List<User> getUserEnEntreprise() {
-		return userRepository.findBySituationsIsTrue();
+	public long getUserEnEntreprise() {
+		return userRepository.countBySituationsIsTrue();
 	}
 
 	@Override

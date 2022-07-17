@@ -124,15 +124,15 @@ public class UserResource extends ExceptionHandling {
 	}
 	
 	@GetMapping("/Alafabrique")
-	public ResponseEntity<List<User>> getUserAlafabrique(){
-		List<User> users=userService.getUserAlafabrique();
-		return new ResponseEntity<> (users,OK);
+	public long getUserAlafabrique(){
+		long users=userService.getUserAlafabrique();
+		return users;
 	}
 	
 	@GetMapping("/EnEntreprise")
-	public ResponseEntity<List<User>> getUserEnEntreprise(){
-		List<User> users=userService.getUserEnEntreprise();
-		return new ResponseEntity<> (users,OK);
+	public long getUserEnEntreprise(){
+		long users=userService.getUserEnEntreprise();
+		return users;
 	}
 		
 	

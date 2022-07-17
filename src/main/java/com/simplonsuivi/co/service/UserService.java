@@ -18,9 +18,9 @@ public interface UserService {
 	
 	List<User> getUser();
 	
-	List<User> getUserAlafabrique();
+	long getUserAlafabrique();
 	
-	List<User> getUserEnEntreprise();
+	long getUserEnEntreprise();
 	
 	User findUserByUsername(String username);
 	
