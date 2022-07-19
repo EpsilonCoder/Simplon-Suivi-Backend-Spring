@@ -123,18 +123,21 @@ public class UserResource extends ExceptionHandling {
 		return new ResponseEntity<> (users,OK);
 	}
 	
+	
+
 	@GetMapping("/Alafabrique")
-	public long getUserAlafabrique(){
-		long users=userService.getUserAlafabrique();
-		return users;
+	public int[] getUsersAlafabrique(){
+		int users=(int) userService.getUserAlafabrique();
+		int user1=(int) userService.getUserEnEntreprise();
+		int user2=(int) userService.getUserActive();
+	    int[] list= {users,user1,user2};
+		return list;
 	}
 	
-	@GetMapping("/EnEntreprise")
-	public long getUserEnEntreprise(){
-		long users=userService.getUserEnEntreprise();
-		return users;
-	}
-		
+	
+	
+	
+	
 	
 	 @GetMapping("/reset-password/{email}")
 	    public ResponseEntity<HttpResponse> resetPassword(@PathVariable String email)

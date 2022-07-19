@@ -22,6 +22,8 @@ public interface UserService {
 	
 	long getUserEnEntreprise();
 	
+	long getUserActive();
+	
 	User findUserByUsername(String username);
 	
 	User findUserByEmail(String Email);

@@ -1,6 +1,5 @@
 package com.simplonsuivi.co.repository;
 
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,9 +13,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserByEmail(String email);
     
-	Long countBySituationsIsFalse();
+	long countBySituationsIsFalse();
 	
-	Long countBySituationsIsTrue();
+	long countBySituationsIsTrue();
+	
+	long countByIsActiveIsTrue();
     
     
 }

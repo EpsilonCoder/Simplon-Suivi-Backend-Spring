@@ -193,15 +193,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.findAll();
 	}
 	
-	@Override
-	public long getUserAlafabrique() {
-		return userRepository.countBySituationsIsFalse();
-	}
 	
-	@Override
-	public long getUserEnEntreprise() {
-		return userRepository.countBySituationsIsTrue();
-	}
+	
+	
 
 	@Override
 	public User findUserByUsername(String username) {
@@ -341,6 +335,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	        FileUtils.deleteDirectory(new File(userFolder.toString()));
 	        this.userRepository.deleteById(user.getId());
 	    }
+
+	@Override
+	public long getUserAlafabrique() {
+		
+		return userRepository.countBySituationsIsTrue();
+	}
+
+	@Override
+	public long getUserEnEntreprise() {
+		
+		return userRepository.countBySituationsIsFalse();
+	}
+
+	@Override
+	public long getUserActive() {
+		
+		return userRepository.countByIsActiveIsTrue();
+	}
+
+	
 
 	
 
